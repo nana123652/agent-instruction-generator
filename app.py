@@ -174,7 +174,7 @@ def num_tokens_from_string(string: str, encoding_name: str) -> int:
     return num_tokens
 
 # OpenAI
-def generate_response_openai(prompt, selected_model, temperature, max_tokens):
+def generate_response_openai(prompt, selected_model, temperature, top_p, max_tokens):
     if not openai_api_key.startswith('sk-'):
         st.warning('Please enter your OpenAI API key!', icon='⚠')
         return
@@ -184,6 +184,7 @@ def generate_response_openai(prompt, selected_model, temperature, max_tokens):
     completion = client_openai.chat.completions.create(
     model=selected_model,
     temperature = temperature,
+    top_p=top_p,
     max_tokens=max_tokens,
     messages=[{"role": "user", "content": full_prompt}],
     stream=False,
@@ -192,7 +193,7 @@ def generate_response_openai(prompt, selected_model, temperature, max_tokens):
     return response
 
 # Anthropic
-def generate_response_anthropic(prompt, selected_model, temperature, max_tokens):
+def generate_response_anthropic(prompt, selected_model, temperature, top_p, max_tokens):
     if not anthropic_api_key.startswith('sk-'):
         st.warning('Please enter your Anthropic API key!', icon='⚠')
         return
@@ -204,6 +205,7 @@ def generate_response_anthropic(prompt, selected_model, temperature, max_tokens)
         max_tokens=max_tokens,
         model=selected_model,
         temperature=temperature,
+        top_p=top_p,
         messages=[
             {"role":"user", "content": prompt}
         ]
@@ -211,14 +213,14 @@ def generate_response_anthropic(prompt, selected_model, temperature, max_tokens)
     return response.content[0].text
 
 #Google Gemini Pro 1.5
-def generate_response_gemini(prompt, selected_model, temperature, max_token):
+def generate_response_gemini(prompt, selected_model, temperature, top_p, max_token):
     # if not google_api_key.startswith('AI'):
     #     st.warning('Please enter correct Gemini API key!', icon='⚠')   
     #     return
         generation_config = {
             'temperature': temperature,
             'top_k': 0,  # Assuming top_k is not to be modified per call in this setup
-            'top_p': 0.95,  # Fixed top_p for more creative responses
+            'top_p': top_p,  # Fixed top_p for more creative responses
             'max_output_tokens': max_token,
         }
         model = genai.GenerativeModel(model_name=selected_model,generation_config=generation_config)
@@ -231,6 +233,7 @@ def generate_response_gemini(prompt, selected_model, temperature, max_token):
 with st.form(key='my_form'):
     prompt = st.text_area('Enter prompt:', 'ペンギンに関する短いエッセイを書いてください。')
     temperature = st.slider("Temperature", 0.0, 1.0, 0.5)
+    top_p = st.slider("Top_p", 0.0, 1.0, 0.9)
     max_tokens = st.number_input("Max tokens", min_value=1, max_value=4000, value=2000)
     model_names = ["claude-3-haiku-20240307", "claude-3-sonnet-20240229", "claude-3-opus-20240229", "gpt-3.5-turbo", "gpt-4-turbo", "gemini-1.5-pro-latest"]
     model_selection = {model: st.checkbox(model, value=False) for model in model_names}
@@ -244,11 +247,11 @@ with st.form(key='my_form'):
                 for i, model in enumerate(selected_models):
                     with tab_container[i]:
                         if 'claude' in model:
-                            response_text = generate_response_anthropic(prompt, model, temperature, max_tokens)
+                            response_text = generate_response_anthropic(prompt, model, temperature, top_p, max_tokens)
                         elif 'gpt' in model:
-                            response_text = generate_response_openai(prompt, model, temperature, max_tokens)
+                            response_text = generate_response_openai(prompt, model, temperature, top_p, max_tokens)
                         else:
-                            response_text=generate_response_gemini(prompt, model, temperature, max_tokens)
+                            response_text=generate_response_gemini(prompt, model, temperature, top_p, max_tokens)
                         st.text_area("Response:", value=response_text, height=500, disabled=False)
                         completion_token_count = num_tokens_from_string(response_text, "cl100k_base")
                         st.markdown(f"**Completion Token Count:** {completion_token_count}")
