@@ -48,17 +48,7 @@ Navigate to `http://localhost:8501` in your web browser to see the app in action
 ## Contributing
 Contributions to improve Multi-LLM Tester are welcome. Please feel free to fork the repository and submit pull requests.
 
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-- OpenAI and Anthropic for providing the APIs and detailed documentation.
-- The Streamlit team for their excellent framework that made this app possible.
-
 ## Author
 - Mamoru
-
-## Last Updated
-- [Last updated date]
 
 Enjoy testing and comparing the capabilities of different large language models with ease!
