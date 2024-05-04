@@ -3,6 +3,9 @@
 ## Overview
 The Multi-LLM Tester is a Streamlit application designed to facilitate easy comparison of responses from different large language models (LLMs) including OpenAI and Anthropic models. This tool is especially useful for developers and researchers interested in evaluating the capabilities and outputs of various LLMs under identical input conditions.
 
+Online app is available here:
+https://multi-llm-tester.streamlit.app/
+
 ## Features
 - **Multiple LLM Integration**: Supports various models from OpenAI and Anthropic, allowing users to test and compare responses side-by-side.
 - **Dynamic Input Configuration**: Users can customize the prompt, temperature, and max tokens to tailor the testing environment according to their needs.
