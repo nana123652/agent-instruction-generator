@@ -1,7 +1,8 @@
 import streamlit as st
 from openai import OpenAI
 from anthropic import Anthropic
-from dotenv import load_dotenv
+import google.generativeai as genai
+
 import os
 import tiktoken
 
@@ -10,8 +11,6 @@ import numpy as np
 
 import time
 from datetime import datetime
-
-load_dotenv()
 
 st.set_page_config("Multi-LLM Tester", page_icon=":memo:")
 
@@ -58,9 +57,9 @@ According to OpenAI and Anthropic, information sent via their APIs is not used f
 """)
 
 
-# Add a new section for how to use the Paper Summarizer
-st.markdown("For instructions on how to use the Paper Summarizer, visit the following link:")
-st.markdown("[How to Use Paper Summarizer](https://github.com/aisprint/paper_summarizer_v2/blob/master/README.md)", unsafe_allow_html=True)
+# Add a new section for how to use the Multi-LLM Tester
+st.markdown("For instructions on how to use the Multi-LLM Tester, visit the following link:")
+st.markdown("[How to Use Multi-LLM Tester](https://github.com/aisprint/Project_Multimodel-Output-Comparison/blob/main/README.md)", unsafe_allow_html=True)
 
 
 # Initialize or update the session state for conversation history
@@ -88,35 +87,49 @@ st.sidebar.markdown(
     unsafe_allow_html=True
 )
 
+google_api_key = st.sidebar.text_input('Gemini API Key', type='password')
+st.sidebar.markdown(
+    "[How to get Gemini API key?](https://ai.google.dev/gemini-api/docs/api-key)", 
+    unsafe_allow_html=True
+)
+st.sidebar.markdown(
+    "[Gemini API Pricing](https://ai.google.dev/pricing)", 
+    unsafe_allow_html=True
+)
+
 # API Pricing
 data = {
     "Model": [
         "claude-3-haiku-20240307", 
         "claude-3-sonnet-20240229", 
+        "claude-3-opus-20240229",
         "gpt-3.5-turbo", 
         "gpt-4-turbo", 
-        "claude-3-opus-20240229"
+        "gemini-1.5-pro-latest"
     ],
     "Prompt Cost": [
         "$0.0025", 
         "$0.03", 
+        "$0.15",
         "$0.005", 
         "$0.1", 
-        "$0.15"
+        "$0.07"
     ],
     "Completion Cost": [
         "$0.0025", 
         "$0.03", 
+        "$0.15",
         "$0.003", 
         "$0.06", 
-        "$0.15"
+        "$0.042"
     ],
     "Total Cost": [
         "$0.005", 
         "$0.06", 
+        "$0.3",
         "$0.008", 
         "$0.16", 
-        "$0.3"
+        "$0.112"
     ]
 }
 
@@ -134,13 +147,9 @@ def add_to_history(user_input, response, file_name):
     st.session_state.history.append({"title": title, "user_input": user_input, "response": response})
 
 
-# Initialize clients with keys
-
-openai_api_key=os.getenv('OPENAI_API_KEY')
-anthropic_api_key=os.getenv('ANTHROPIC_API_KEY')
-
 client_openai = OpenAI(api_key=openai_api_key)
 client_anthropic = Anthropic(api_key=anthropic_api_key)
+genai.configure(api_key=google_api_key)
 
 # Define function to get API client based on the model name
 def get_client(model_name):
@@ -186,6 +195,7 @@ def generate_response_openai(prompt, selected_model, temperature, max_tokens):
 def generate_response_anthropic(prompt, selected_model, temperature, max_tokens):
     if not anthropic_api_key.startswith('sk-'):
         st.warning('Please enter your Anthropic API key!', icon='⚠')
+        return
     if submitted and anthropic_api_key.startswith('sk-'):
         prompt_token_count = num_tokens_from_string(prompt, "cl100k_base")
         st.markdown(f"**Prompt Token Count:** {prompt_token_count}")
@@ -200,12 +210,29 @@ def generate_response_anthropic(prompt, selected_model, temperature, max_tokens)
     ) 
     return response.content[0].text
 
+#Google Gemini Pro 1.5
+def generate_response_gemini(prompt, selected_model, temperature, max_token):
+    # if not google_api_key.startswith('AI'):
+    #     st.warning('Please enter correct Gemini API key!', icon='⚠')   
+    #     return
+        generation_config = {
+            'temperature': temperature,
+            'top_k': 0,  # Assuming top_k is not to be modified per call in this setup
+            'top_p': 0.95,  # Fixed top_p for more creative responses
+            'max_output_tokens': max_token,
+        }
+        model = genai.GenerativeModel(model_name=selected_model,generation_config=generation_config)
+        results = model.generate_content(prompt)
+        response = results.candidates[0].content.parts[0].text
+        return response
+
+
 # Define a Streamlit form for input
 with st.form(key='my_form'):
     prompt = st.text_area('Enter prompt:', 'ペンギンに関する短いエッセイを書いてください。')
     temperature = st.slider("Temperature", 0.0, 1.0, 0.5)
     max_tokens = st.number_input("Max tokens", min_value=1, max_value=4000, value=2000)
-    model_names = ["claude-3-haiku-20240307", "claude-3-sonnet-20240229", "claude-3-opus-20240229", "gpt-3.5-turbo", "gpt-4-turbo"]
+    model_names = ["claude-3-haiku-20240307", "claude-3-sonnet-20240229", "claude-3-opus-20240229", "gpt-3.5-turbo", "gpt-4-turbo", "gemini-1.5-pro-latest"]
     model_selection = {model: st.checkbox(model, value=False) for model in model_names}
     submitted = st.form_submit_button("Submit")
 
@@ -218,8 +245,10 @@ with st.form(key='my_form'):
                     with tab_container[i]:
                         if 'claude' in model:
                             response_text = generate_response_anthropic(prompt, model, temperature, max_tokens)
-                        else:
+                        elif 'gpt' in model:
                             response_text = generate_response_openai(prompt, model, temperature, max_tokens)
+                        else:
+                            response_text=generate_response_gemini(prompt, model, temperature, max_tokens)
                         st.text_area("Response:", value=response_text, height=500, disabled=False)
                         completion_token_count = num_tokens_from_string(response_text, "cl100k_base")
                         st.markdown(f"**Completion Token Count:** {completion_token_count}")
