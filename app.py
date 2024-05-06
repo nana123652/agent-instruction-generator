@@ -12,6 +12,8 @@ import numpy as np
 import time
 from datetime import datetime
 
+import deepl
+
 st.set_page_config("Multi-LLM Tester", page_icon=":memo:")
 
 # Custom styles for the author name and updated date
@@ -96,6 +98,10 @@ st.sidebar.markdown(
     "[Gemini API Pricing](https://ai.google.dev/pricing)", 
     unsafe_allow_html=True
 )
+
+# Sidebar for API keys (including DeepL)
+deepL_api_key = st.sidebar.text_input('DeepL API Key', type='password')
+st.sidebar.markdown("[How to get DeepL API key?](https://www.deepl.com/pro#developer)", unsafe_allow_html=True)
 
 # API Pricing
 data = {
@@ -228,6 +234,19 @@ def generate_response_gemini(prompt, selected_model, temperature, top_p, max_tok
         response = results.candidates[0].content.parts[0].text
         return response
 
+# Function to handle translation
+def translate_text(input_text, target_language):
+    if not deepL_api_key:
+        st.error("Please set your DeepL API key to use the translation feature.")
+        return input_text  # return original text if no API key
+    translator = deepl.Translator(deepL_api_key)
+    if target_language == "JP":
+        translated_text = translator.translate_text(input_text, target_lang="JA")
+    elif target_language == "EN":
+        translated_text = translator.translate_text(input_text, target_lang="EN-US")
+    else:
+        return input_text  # return original if 'NONE' selected
+    return translated_text.text
 
 # Define a Streamlit form for input
 with st.form(key='my_form'):
@@ -237,6 +256,8 @@ with st.form(key='my_form'):
     max_tokens = st.number_input("Max tokens", min_value=1, max_value=4000, value=2000)
     model_names = ["claude-3-haiku-20240307", "claude-3-sonnet-20240229", "claude-3-opus-20240229", "gpt-3.5-turbo", "gpt-4-turbo", "gemini-1.5-pro-latest"]
     model_selection = {model: st.checkbox(model, value=False) for model in model_names}
+    # Translation dropdown in the form
+    translation_options = st.selectbox("Translation", ["NONE", "JP", "EN"], index=0)
     submitted = st.form_submit_button("Submit")
 
     if submitted:
@@ -255,5 +276,11 @@ with st.form(key='my_form'):
                         st.text_area("Response:", value=response_text, height=500, disabled=False)
                         completion_token_count = num_tokens_from_string(response_text, "cl100k_base")
                         st.markdown(f"**Completion Token Count:** {completion_token_count}")
+                         # Translate response if needed and if NOT 'NONE'
+                        if translation_options != "NONE":
+                            translated_response = translate_text(response_text, translation_options)
+                            st.text_area("Translated Response:", value=translated_response, height=300, disabled=False)
+                        else:
+                            st.text_area("Translated Response:", value="Translation is not selected.", height=300, disabled=True)
             else:
                 st.error("Please select at least one model.")
