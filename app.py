@@ -250,7 +250,7 @@ def translate_text(input_text, target_language):
 
 # Define a Streamlit form for input
 with st.form(key='my_form'):
-    prompt = st.text_area('Enter prompt:', 'ペンギンに関する短いエッセイを書いてください。')
+    prompt = st.text_area('Enter prompt:', 'ペンギンに関する短いエッセイを書いてください。', height=200)
     temperature = st.slider("Temperature", 0.0, 1.0, 0.5)
     top_p = st.slider("Top_p", 0.0, 1.0, 0.9)
     max_tokens = st.number_input("Max tokens", min_value=1, max_value=4000, value=2000)
@@ -273,14 +273,14 @@ with st.form(key='my_form'):
                             response_text = generate_response_openai(prompt, model, temperature, top_p, max_tokens)
                         else:
                             response_text=generate_response_gemini(prompt, model, temperature, top_p, max_tokens)
-                        st.text_area("Response:", value=response_text, height=500, disabled=False)
+                        st.text_area("Response:", value=response_text, height=800, disabled=False)
                         completion_token_count = num_tokens_from_string(response_text, "cl100k_base")
                         st.markdown(f"**Completion Token Count:** {completion_token_count}")
                          # Translate response if needed and if NOT 'NONE'
                         if translation_options != "NONE":
                             translated_response = translate_text(response_text, translation_options)
-                            st.text_area("Translated Response:", value=translated_response, height=300, disabled=False)
+                            st.text_area("Translated Response:", value=translated_response, height=500, disabled=False)
                         else:
-                            st.text_area("Translated Response:", value="Translation is not selected.", height=300, disabled=True)
+                            st.text_area("Translated Response:", value="Translation is not selected.", height=500, disabled=True)
             else:
                 st.error("Please select at least one model.")
