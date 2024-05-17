@@ -275,7 +275,7 @@ with st.form(key='agent_instruction'):
     model_names = ["claude-3-haiku-20240307", "claude-3-sonnet-20240229", "claude-3-opus-20240229", "gpt-3.5-turbo", "gpt-4-turbo", "gpt-4o", "gemini-1.5-pro-latest"]
     model_selection = {model: st.checkbox(model, value=False) for model in model_names}
     # Translation dropdown in the form
-    translation_options = st.selectbox("7.Please set language if you want to generate the second language vy DeepL(See codes in DeepL Docs)", ["NONE", "EN-US", "JA", "DE", "ES", "FR", "IT", "KO", "PL", "RU", "TR", "ZH"], index=0)
+    translation_options = st.selectbox("7.Please set language if you want to generate the second language by DeepL(See codes in [DeepL Docs](https://developers.deepl.com/docs/resources/supported-languages))", ["NONE", "EN-US", "JA", "DE", "ES", "FR", "IT", "KO", "PL", "RU", "TR", "ZH"], index=0)
     submitted = st.form_submit_button("Submit")
 
 if submitted:
