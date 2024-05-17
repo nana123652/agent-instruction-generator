@@ -6,11 +6,13 @@ The Agent Instruction Generator is a Streamlit application designed to aid in ge
 
 ## Features
 
-- **Multiple LLM Integration**: Supports models like GPT-3.5, GPT-4, Claude-3 variations, and Gemini-1.5.
+- **Multiple LLM Integration**: Supports models like GPT-3.5, GPT-4, Claude-3 variations, and Gemini-Pro-1.5.
 - **Custom Instruction Generation**: Generates specific instructions for agents, including persona and step-by-step workflows.
-- **Translation Features**: Offers translation capabilities to Japanese and English for generated instructions.
+- **Translation Features**: Offers translation capabilities to other languages for generated instructions.
 
 ## How to Use
+
+Web app is available here: https://agent-instruction-generator.streamlit.app/
 
 1. **Input Task**: Enter the task you need assistance with in the designated text area.
 2. **Set Output Language**: Select primary output language from the dropdown menu.
