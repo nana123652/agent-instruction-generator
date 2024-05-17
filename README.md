@@ -50,10 +50,6 @@ streamlit run app.py
 ```
 Follow the on-screen instructions to generate agent instructions.
 
-## Documentation
-
-Additional documentation is available in the `docs` folder which includes detailed descriptions of the application architecture and API documentation.
-
 ## Contributing
 
 Contributions to improve Agent Instructon Generator are welcome. Please feel free to fork the repository and submit pull requests.
