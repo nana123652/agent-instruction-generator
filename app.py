@@ -14,7 +14,7 @@ from datetime import datetime
 
 import deepl
 
-st.set_page_config("Agent Instruction Generator🤖💬", page_icon=":robot:")
+st.set_page_config("Agent Instruction Generator", page_icon=":robot:")
 
 # Custom styles for the author name and updated date
 st.markdown("""
@@ -43,7 +43,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Display the stylish title
-st.markdown('<div class="title-style">Agent Instruction Generator</div>', unsafe_allow_html=True)
+st.markdown('<div class="title-style">Agent Instruction Generator🤖💬</div>', unsafe_allow_html=True)
 
 # Display author and the updated date
 current_date = datetime.now().strftime("%m/%d/%Y")
