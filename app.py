@@ -43,7 +43,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Display the stylish title
-st.markdown('<div class="title-style">Agent Instruction Generator🤖💬</div>', unsafe_allow_html=True)
+st.markdown(f'<div class="title-style">Agent Instruction(Prompt) \n Generator🤖💬</div>', unsafe_allow_html=True)
 
 # Display author and the updated date
 current_date = datetime.now().strftime("%m/%d/%Y")
