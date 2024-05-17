@@ -21,6 +21,8 @@ The Agent Instruction Generator is a Streamlit application designed to aid in ge
 7. **View Responses**: The generated content will appear in the "Generated Content Log" area as it is created.
 8. **Final Instructions**: The complete and final instruction set will be displayed in a separate text area, ready to be copied and used as needed.
 
+How To Use Video is available on Youtube: [https://youtu.be/xCJTE5-rVmk](https://youtu.be/xCJTE5-rVmk)
+
 ## Getting Started
 
 ### Prerequisites
