@@ -61,7 +61,7 @@ According to OpenAI and Anthropic, information sent via their APIs is not used f
 
 # Add a new section for how to use the Agent Instruction Generator
 st.markdown("For instructions on how to use the Agent Instruction Generator, visit the following link:")
-st.markdown("[How to Use Agent Instruction Generator](https://github.com/aisprint/Project_Multimodel-Output-Comparison/blob/main/README.md)", unsafe_allow_html=True)
+st.markdown("[How to Use Agent Instruction Generator](https://github.com/aisprint/agent-instruction-generator/blob/main/README.md)", unsafe_allow_html=True)
 
 
 # Initialize or update the session state for conversation history
