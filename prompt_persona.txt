@@ -1,5 +1,6 @@
 <Instruction>
 Please define Persona who assists the <Task> above.
+Please make sure to output in the specified language.
 
 Template:
 
@@ -19,3 +20,4 @@ Template:
 
 ## Goal:
 [Goal]
+

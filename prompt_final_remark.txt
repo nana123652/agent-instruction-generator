@@ -1,6 +1,9 @@
-Please add a final remark to emphasize the most improtant instructions again based on Agent brief above.
+Please add a final remark to emphasize the most improtant instructions again based on <Agent brief> above.
+Please make sure to output in the specified language.
 
 Template:
 
 # Important instruction
 [Output the final remark here]
+
+

@@ -265,15 +265,17 @@ def scroll_text_area(key):
 # Instruction generator
 with st.form(key='agent_instruction'):
     prompt = st.text_area("1.Please enter what you need help:",'Blog writing assistants', height=50)
-    full_prompt = f"{prompt_agent_brief}\n{prompt}"
-    temperature = st.slider("2.Please set Temperature", 0.0, 1.0, 0.5)
-    top_p = st.slider("3.Please set Top_p", 0.0, 1.0, 0.9)
-    max_tokens = st.number_input("4.Please set max tokens", min_value=1, max_value=4000, value=2000)
-    st.markdown("5.Please select LLMs:")
+    output_language = st.selectbox("2.Please set output language", ["English", "Japanese", "German", "Spanish", "French", "Italian", "Korean", "Polish", "Russian", "Turkish", "Chinese"]
+, index=0)
+    full_prompt = f"{prompt_agent_brief}\n{prompt}\n\n<Output language>\n{output_language}"
+    temperature = st.slider("3.Please set Temperature", 0.0, 1.0, 0.5)
+    top_p = st.slider("4.Please set Top_p", 0.0, 1.0, 0.9)
+    max_tokens = st.number_input("5.Please set max tokens", min_value=1, max_value=4000, value=2000)
+    st.markdown("6.Please select LLMs:")
     model_names = ["claude-3-haiku-20240307", "claude-3-sonnet-20240229", "claude-3-opus-20240229", "gpt-3.5-turbo", "gpt-4-turbo", "gpt-4o", "gemini-1.5-pro-latest"]
     model_selection = {model: st.checkbox(model, value=False) for model in model_names}
     # Translation dropdown in the form
-    translation_options = st.selectbox("6.Please set language if you want to translate an instruction(See codes in DeepL Docs)", ["NONE", "EN", "JA", "DE", "ES", "FR", "IT", "KO", "PL", "RU", "TR", "ZH"], index=0)
+    translation_options = st.selectbox("7.Please set language if you want to generate the second language vy DeepL(See codes in DeepL Docs)", ["NONE", "EN-US", "JA", "DE", "ES", "FR", "IT", "KO", "PL", "RU", "TR", "ZH"], index=0)
     submitted = st.form_submit_button("Submit")
 
 if submitted:
@@ -304,7 +306,7 @@ if submitted:
             
                 # Generate Persona
                 with st.spinner(f'Generating PERSONA from {model}...🤖💤'):
-                    full_prompt=f"{response_text_agent_brief}\n{prompt_persona}"
+                    full_prompt=f"{response_text_agent_brief}\n{prompt_persona}\n\n<Output language>\n{output_language}"
                     if 'claude' in model:
                         response_text_persona = generate_response_anthropic(full_prompt, model, temperature, top_p, max_tokens)
                     elif 'gpt' in model:
@@ -317,7 +319,7 @@ if submitted:
 
                 # Generate Step flow
                 with st.spinner(f'Generating STEP FLOW from {model}...🤖💤'):
-                    full_prompt=f"{response_text_persona}\n{prompt_step_flow}"
+                    full_prompt=f"{response_text_persona}\n{prompt_step_flow}\n\n<Output language>\n{output_language}"
                     if 'claude' in model:
                         response_text_step_flow = generate_response_anthropic(full_prompt, model, temperature, top_p, max_tokens)
                     elif 'gpt' in model:
@@ -330,7 +332,7 @@ if submitted:
 
                 # Generate Final remark
                 with st.spinner(f'Generating FINAL REMARK from {model}...🤖💤'):
-                    full_prompt=f"{response_text_agent_brief}\n{prompt_final_remark}"
+                    full_prompt=f"{response_text_agent_brief}\n{prompt_final_remark}\n\n<Output language>\n{output_language}"
                     if 'claude' in model:
                         response_text_final_remark = generate_response_anthropic(full_prompt, model, temperature, top_p, max_tokens)
                     elif 'gpt' in model:
