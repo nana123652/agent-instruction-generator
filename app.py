@@ -249,13 +249,9 @@ def translate_text(input_text, target_language):
         st.error("Please set your DeepL API key to use the translation feature.")
         return input_text  # return original text if no API key
     translator = deepl.Translator(deepL_api_key)
-    if target_language == "JP":
-        translated_text = translator.translate_text(input_text, target_lang="JA")
-    elif target_language == "EN":
-        translated_text = translator.translate_text(input_text, target_lang="EN-US")
-    else:
-        return input_text  # return original if 'NONE' selected
-    return translated_text.text
+    translated_text = translator.translate_text(input_text, target_lang=target_language)
+    return translated_text  
+
 
 # Scroll text area
 def scroll_text_area(key):
@@ -277,7 +273,7 @@ with st.form(key='agent_instruction'):
     model_names = ["claude-3-haiku-20240307", "claude-3-sonnet-20240229", "claude-3-opus-20240229", "gpt-3.5-turbo", "gpt-4-turbo", "gpt-4o", "gemini-1.5-pro-latest"]
     model_selection = {model: st.checkbox(model, value=False) for model in model_names}
     # Translation dropdown in the form
-    translation_options = st.selectbox("6.Please set language if you want to translate an instruction(See codes in DeepL Docs)", ["NONE", "EN", "JP", "DE", "ES", "FR", "IT", "KO", "PL", "RU", "TR", "ZH"], index=0)
+    translation_options = st.selectbox("6.Please set language if you want to translate an instruction(See codes in DeepL Docs)", ["NONE", "EN", "JA", "DE", "ES", "FR", "IT", "KO", "PL", "RU", "TR", "ZH"], index=0)
     submitted = st.form_submit_button("Submit")
 
 if submitted:
@@ -287,11 +283,13 @@ if submitted:
     if selected_models:
         tab_container = st.tabs([f"{model}" for model in selected_models])
         response_container = st.empty()
+        final_instructions=[]
+
         for i, model in enumerate(selected_models):
             with tab_container[i]:
 
                 # Generate Agent Brief
-                with st.spinner(f'Generating agent brief from {model}...🤖💤'):
+                with st.spinner(f'Generating AGENT BRIEF from {model}...🤖💤'):
                     if 'claude' in model:
                         response_text_agent_brief = generate_response_anthropic(full_prompt, model, temperature, top_p, max_tokens)
                     elif 'gpt' in model:
@@ -305,7 +303,7 @@ if submitted:
 
             
                 # Generate Persona
-                with st.spinner(f'Generating persona from {model}...🤖💤'):
+                with st.spinner(f'Generating PERSONA from {model}...🤖💤'):
                     full_prompt=f"{response_text_agent_brief}\n{prompt_persona}"
                     if 'claude' in model:
                         response_text_persona = generate_response_anthropic(full_prompt, model, temperature, top_p, max_tokens)
@@ -318,7 +316,7 @@ if submitted:
                     response_container.text_area("Generated Content log", value=response_text, height=800)
 
                 # Generate Step flow
-                with st.spinner(f'Generating step flow from {model}...🤖💤'):
+                with st.spinner(f'Generating STEP FLOW from {model}...🤖💤'):
                     full_prompt=f"{response_text_persona}\n{prompt_step_flow}"
                     if 'claude' in model:
                         response_text_step_flow = generate_response_anthropic(full_prompt, model, temperature, top_p, max_tokens)
@@ -331,7 +329,7 @@ if submitted:
                     response_container.text_area("Generated Content log", value=response_text, height=800)
 
                 # Generate Final remark
-                with st.spinner(f'Generating final remark from {model}...🤖💤'):
+                with st.spinner(f'Generating FINAL REMARK from {model}...🤖💤'):
                     full_prompt=f"{response_text_agent_brief}\n{prompt_final_remark}"
                     if 'claude' in model:
                         response_text_final_remark = generate_response_anthropic(full_prompt, model, temperature, top_p, max_tokens)
@@ -347,6 +345,7 @@ if submitted:
                 st.markdown(f"\n\n")
                 st.markdown(f"**Agent Instruction (Final)**")
                 full_instruction=f"# PERSONA\n{response_text_persona}\n\n# STEP FLOW\n{response_text_step_flow}\n\n{response_text_final_remark}"
+                final_instructions.append(full_instruction)
                 st.text_area("Please copy this instruction and paste into system prompt in any LLMs", value=full_instruction, height=800, disabled=False)
                 
                 # Translate response if needed and if NOT 'NONE'
@@ -354,6 +353,14 @@ if submitted:
                     translated_response = translate_text(full_instruction, translation_options)
                     st.text_area("Translated Instrcution:", value=translated_response, height=800, disabled=False)
 
+        # # Translate response if needed and if NOT 'NONE'
+        # translated_responses=[]
+        # if translation_options != "NONE":
+        #     for i, final_instruction in enumerate(final_instructions):
+        #         translated_response = translate_text(final_instruction, translation_options)
+        #         translated_responses.append(translated_response)
+        #         with tab_container[i]:
+        #             st.text_area("Translated Instruction:", value=translated_responses[i], height=800, disabled=False)
 
     else:
         st.error("Please select at least one model.")
