@@ -296,7 +296,7 @@ if submitted:
                         response_text_agent_brief = generate_response_anthropic(full_prompt, model, temperature, top_p, max_tokens)
                     elif 'gpt' in model:
                         response_text_agent_brief = generate_response_openai(full_prompt, model, temperature, top_p, max_tokens)
-                    else:
+                    elif 'gemini' in model:
                         response_text_agent_brief=generate_response_gemini(full_prompt, model, temperature, top_p, max_tokens)
                     
                     response_text += f"# Agent Brief\n{response_text_agent_brief}\n\n"
@@ -311,7 +311,7 @@ if submitted:
                         response_text_persona = generate_response_anthropic(full_prompt, model, temperature, top_p, max_tokens)
                     elif 'gpt' in model:
                         response_text_persona = generate_response_openai(full_prompt, model, temperature, top_p, max_tokens)
-                    else:
+                    elif 'gemini' in model:
                         response_text_persona=generate_response_gemini(full_prompt, model, temperature, top_p, max_tokens)
 
                     response_text += f"# Persona\n{response_text_persona}\n\n"
@@ -324,7 +324,7 @@ if submitted:
                         response_text_step_flow = generate_response_anthropic(full_prompt, model, temperature, top_p, max_tokens)
                     elif 'gpt' in model:
                         response_text_step_flow = generate_response_openai(full_prompt, model, temperature, top_p, max_tokens)
-                    else:
+                    elif 'gemini' in model:
                         response_text_step_flow=generate_response_gemini(full_prompt, model, temperature, top_p, max_tokens)
 
                     response_text += f"# Step Flow\n{response_text_step_flow}\n\n"
@@ -337,7 +337,7 @@ if submitted:
                         response_text_final_remark = generate_response_anthropic(full_prompt, model, temperature, top_p, max_tokens)
                     elif 'gpt' in model:
                         response_text_final_remark = generate_response_openai(full_prompt, model, temperature, top_p, max_tokens)
-                    else:
+                    elif 'gemini' in model:
                         response_text_final_remark=generate_response_gemini(full_prompt, model, temperature, top_p, max_tokens)
 
                     response_text += f"# Final Remark\n{response_text_final_remark}\n\n"
