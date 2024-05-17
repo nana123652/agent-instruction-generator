@@ -156,7 +156,6 @@ def add_to_history(user_input, response, file_name):
     title = f"{formatted_date}"
     st.session_state.history.append({"title": title, "user_input": user_input, "response": response})
 
-    
 client_openai = OpenAI(api_key=openai_api_key)
 client_anthropic = Anthropic(api_key=anthropic_api_key)
 genai.configure(api_key=google_api_key)
