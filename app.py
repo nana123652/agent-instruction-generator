@@ -342,18 +342,21 @@ if submitted:
 
                     response_text += f"# Final Remark\n{response_text_final_remark}\n\n"
                     response_container.text_area("Generated Content log", value=response_text, height=800)
+                
+                # Final instruction
+                st.markdown(f"\n\n")
+                st.markdown(f"**Agent Instruction (Final)**")
+                full_instruction=f"# PERSONA\n{response_text_persona}\n\n# STEP FLOW\n{response_text_step_flow}\n\n{response_text_final_remark}"
+                st.text_area("Please copy this instruction and paste into system prompt in any LLMs", value=full_instruction, height=800, disabled=False)
+                
+                # Translate response if needed and if NOT 'NONE'
+                if translation_options != "NONE":
+                    translated_response = translate_text(full_instruction, translation_options)
+                    st.text_area("Translated Instrcution:", value=translated_response, height=800, disabled=False)
+
 
     else:
         st.error("Please select at least one model.")
         
-    # Final instruction
-    st.markdown(f"\n\n")
-    st.markdown(f"**Agent Instruction (Final)**")
-    full_instruction=f"# PERSONA\n{response_text_persona}\n\n# STEP FLOW\n{response_text_step_flow}\n\n{response_text_final_remark}"
-    st.text_area("Please copy this instruction and paste into system prompt in any LLMs", value=full_instruction, height=800, disabled=False)
-    
-    # Translate response if needed and if NOT 'NONE'
-    if translation_options != "NONE":
-        translated_response = translate_text(full_instruction, translation_options)
-        st.text_area("Translated Instrcution:", value=translated_response, height=800, disabled=False)
 
+    
