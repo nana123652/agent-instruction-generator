@@ -13,12 +13,13 @@ The Agent Instruction Generator is a Streamlit application designed to aid in ge
 ## How to Use
 
 1. **Input Task**: Enter the task you need assistance with in the designated text area.
-2. **Set Parameters**: Adjust the `Temperature`, `Top_p`, and `Max tokens` settings according to your preferences.
-3. **Model Selection**: Choose one or more language models to generate responses.
-4. **Translation Option**: If you need the final instruction in another language, select either Japanese or English from the dropdown menu.
-5. **Submit**: Click the 'Submit' button to process the input through the selected models.
-6. **View Responses**: The generated content will appear in the "Generated Content Log" area as it is created.
-7. **Final Instructions**: The complete and final instruction set will be displayed in a separate text area, ready to be copied and used as needed.
+2. **Set Output Language**: Select primary output language from the dropdown menu.
+3. **Set Parameters**: Adjust the `Temperature`, `Top_p`, and `Max tokens` settings according to your preferences.
+4. **Model Selection**: Choose one or more language models to generate responses.
+5. **Translation Option**: If you need the second language, select it from the dropdown menu. For a complete list of language codes and their corresponding languages, please refer to the [DeepL documentation](https://developers.deepl.com/docs/resources/supported-languages). 
+6. **Submit**: Click the 'Submit' button to process the input through the selected models.
+7. **View Responses**: The generated content will appear in the "Generated Content Log" area as it is created.
+8. **Final Instructions**: The complete and final instruction set will be displayed in a separate text area, ready to be copied and used as needed.
 
 ## Getting Started
 
