@@ -14,7 +14,7 @@ from datetime import datetime
 
 import deepl
 
-st.set_page_config("Agent Instruction Generator", page_icon=":memo:")
+st.set_page_config("Agent Instruction Generator", page_icon=":robot:")
 
 # Custom styles for the author name and updated date
 st.markdown("""
