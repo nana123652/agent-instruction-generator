@@ -14,7 +14,7 @@ from datetime import datetime
 
 import deepl
 
-st.set_page_config("Multi-LLM Tester", page_icon=":memo:")
+st.set_page_config("Agent Instruction Generator", page_icon=":memo:")
 
 # Custom styles for the author name and updated date
 st.markdown("""
@@ -43,7 +43,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Display the stylish title
-st.markdown('<div class="title-style">Multi-LLM Tester</div>', unsafe_allow_html=True)
+st.markdown('<div class="title-style">Agent Instruction Generator</div>', unsafe_allow_html=True)
 
 # Display author and the updated date
 current_date = datetime.now().strftime("%m/%d/%Y")
@@ -59,9 +59,9 @@ According to OpenAI and Anthropic, information sent via their APIs is not used f
 """)
 
 
-# Add a new section for how to use the Multi-LLM Tester
-st.markdown("For instructions on how to use the Multi-LLM Tester, visit the following link:")
-st.markdown("[How to Use Multi-LLM Tester](https://github.com/aisprint/Project_Multimodel-Output-Comparison/blob/main/README.md)", unsafe_allow_html=True)
+# Add a new section for how to use the Agent Instruction Generator
+st.markdown("For instructions on how to use the Agent Instruction Generator, visit the following link:")
+st.markdown("[How to Use Agent Instruction Generator](https://github.com/aisprint/Project_Multimodel-Output-Comparison/blob/main/README.md)", unsafe_allow_html=True)
 
 
 # Initialize or update the session state for conversation history
@@ -111,6 +111,7 @@ data = {
         "claude-3-opus-20240229",
         "gpt-3.5-turbo", 
         "gpt-4-turbo", 
+        "gpt-4o",
         "gemini-1.5-pro-latest"
     ],
     "Prompt Cost": [
@@ -119,6 +120,7 @@ data = {
         "$0.15",
         "$0.005", 
         "$0.1", 
+        "$0.05",
         "$0.07"
     ],
     "Completion Cost": [
@@ -127,6 +129,7 @@ data = {
         "$0.15",
         "$0.003", 
         "$0.06", 
+        "$0.03",
         "$0.042"
     ],
     "Total Cost": [
@@ -135,6 +138,7 @@ data = {
         "$0.3",
         "$0.008", 
         "$0.16", 
+        "$0.08",
         "$0.112"
     ]
 }
@@ -152,6 +156,12 @@ def add_to_history(user_input, response, file_name):
     title = f"{formatted_date}"
     st.session_state.history.append({"title": title, "user_input": user_input, "response": response})
 
+#### Delete here when deploying
+openai_api_key='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'
+anthropic_api_key='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'
+google_api_key='AIzaSyB1oSm6aMWtEsHCrYFVSEIAfq55GRD_rQc'
+deepL_api_key='d6670385-4818-4a68-bdf9-202c9e4c596f:fx'
+################################
 
 client_openai = OpenAI(api_key=openai_api_key)
 client_anthropic = Anthropic(api_key=anthropic_api_key)
@@ -164,14 +174,21 @@ def get_client(model_name):
     else:
         return client_openai
 
-# Copy button
-def create_copy_button(text, key):
-    button_html = f"""<button onclick='navigator.clipboard.writeText("{text}")'>Copy to clipboard</button>"""
-    st.markdown(button_html, unsafe_allow_html=True)
+#Define a prompt for agent brief
+with open("./prompt_agent_brief.txt","r") as f:
+    prompt_agent_brief = f.read()
 
-#Define system prompt
-with open("./system_prompt.txt","r") as f:
-    system_prompt = f.read()
+#Define a prompt for persona
+with open("./prompt_persona.txt","r") as f:
+    prompt_persona = f.read()
+
+#Define a promot for Step flow
+with open("./prompt_step_flow.txt","r") as f:
+    prompt_step_flow = f.read()
+
+#Define a promot for final remark
+with open("./prompt_final_remark.txt","r") as f:
+    prompt_final_remark = f.read()
 
 #count tokens
 def num_tokens_from_string(string: str, encoding_name: str) -> int:
@@ -184,15 +201,14 @@ def generate_response_openai(prompt, selected_model, temperature, top_p, max_tok
     if not openai_api_key.startswith('sk-'):
         st.warning('Please enter your OpenAI API key!', icon='⚠')
         return
-    full_prompt = f"{system_prompt}\n{prompt}"
-    prompt_token_count = num_tokens_from_string(full_prompt, "cl100k_base")
-    st.markdown(f"**Prompt Token Count(system prompt added):** {prompt_token_count}")
+    prompt_token_count = num_tokens_from_string(prompt, "cl100k_base")
+    # st.markdown(f"**Prompt Token Count(system prompt added):** {prompt_token_count}")
     completion = client_openai.chat.completions.create(
     model=selected_model,
     temperature = temperature,
     top_p=top_p,
     max_tokens=max_tokens,
-    messages=[{"role": "user", "content": full_prompt}],
+    messages=[{"role": "user", "content": prompt}],
     stream=False,
     )
     response = completion.choices[0].message.content
@@ -205,9 +221,9 @@ def generate_response_anthropic(prompt, selected_model, temperature, top_p, max_
         return
     if submitted and anthropic_api_key.startswith('sk-'):
         prompt_token_count = num_tokens_from_string(prompt, "cl100k_base")
-        st.markdown(f"**Prompt Token Count:** {prompt_token_count}")
+        # st.markdown(f"**Prompt Token Count:** {prompt_token_count}")
         response = client_anthropic.messages.create(
-        system = system_prompt,
+        system = 'You are a helpful assistant',
         max_tokens=max_tokens,
         model=selected_model,
         temperature=temperature,
@@ -248,39 +264,103 @@ def translate_text(input_text, target_language):
         return input_text  # return original if 'NONE' selected
     return translated_text.text
 
-# Define a Streamlit form for input
-with st.form(key='my_form'):
-    prompt = st.text_area('Enter prompt:', 'ペンギンに関する短いエッセイを書いてください。', height=200)
-    temperature = st.slider("Temperature", 0.0, 1.0, 0.5)
-    top_p = st.slider("Top_p", 0.0, 1.0, 0.9)
-    max_tokens = st.number_input("Max tokens", min_value=1, max_value=4000, value=2000)
-    model_names = ["claude-3-haiku-20240307", "claude-3-sonnet-20240229", "claude-3-opus-20240229", "gpt-3.5-turbo", "gpt-4-turbo", "gemini-1.5-pro-latest"]
+# Scroll text area
+def scroll_text_area(key):
+    st.markdown(f"""
+        <script>
+            const textarea = document.getElementById("{key}");
+            textarea.scrollTop = textarea.scrollHeight;
+        </script>
+        """, unsafe_allow_html=True)
+
+# Instruction generator
+with st.form(key='agent_instruction'):
+    prompt = st.text_area("1.Please enter what you need help:",'Blog writing assistants', height=50)
+    full_prompt = f"{prompt_agent_brief}\n{prompt}"
+    temperature = st.slider("2.Please set Temperature", 0.0, 1.0, 0.5)
+    top_p = st.slider("3.Please set Top_p", 0.0, 1.0, 0.9)
+    max_tokens = st.number_input("4.Please set max tokens", min_value=1, max_value=4000, value=2000)
+    st.markdown("5.Please select LLMs:")
+    model_names = ["claude-3-haiku-20240307", "claude-3-sonnet-20240229", "claude-3-opus-20240229", "gpt-3.5-turbo", "gpt-4-turbo", "gpt-4o", "gemini-1.5-pro-latest"]
     model_selection = {model: st.checkbox(model, value=False) for model in model_names}
     # Translation dropdown in the form
-    translation_options = st.selectbox("Translation", ["NONE", "JP", "EN"], index=0)
+    translation_options = st.selectbox("6.Please set language if you want to translate an instruction(See codes in DeepL Docs)", ["NONE", "EN", "JP", "DE", "ES", "FR", "IT", "KO", "PL", "RU", "TR", "ZH"], index=0)
     submitted = st.form_submit_button("Submit")
 
-    if submitted:
-        selected_models = [model for model, checked in model_selection.items() if checked]
-        with st.spinner('Generating.....🤖💤'):
-            if selected_models:
-                tab_container = st.tabs([f"{model}" for model in selected_models])
-                for i, model in enumerate(selected_models):
-                    with tab_container[i]:
-                        if 'claude' in model:
-                            response_text = generate_response_anthropic(prompt, model, temperature, top_p, max_tokens)
-                        elif 'gpt' in model:
-                            response_text = generate_response_openai(prompt, model, temperature, top_p, max_tokens)
-                        else:
-                            response_text=generate_response_gemini(prompt, model, temperature, top_p, max_tokens)
-                        st.text_area("Response:", value=response_text, height=800, disabled=False)
-                        completion_token_count = num_tokens_from_string(response_text, "cl100k_base")
-                        st.markdown(f"**Completion Token Count:** {completion_token_count}")
-                         # Translate response if needed and if NOT 'NONE'
-                        if translation_options != "NONE":
-                            translated_response = translate_text(response_text, translation_options)
-                            st.text_area("Translated Response:", value=translated_response, height=500, disabled=False)
-                        else:
-                            st.text_area("Translated Response:", value="Translation is not selected.", height=500, disabled=True)
-            else:
-                st.error("Please select at least one model.")
+if submitted:
+    selected_models = [model for model, checked in model_selection.items() if checked]
+    response_text=""
+
+    if selected_models:
+        tab_container = st.tabs([f"{model}" for model in selected_models])
+        response_container = st.empty()
+        for i, model in enumerate(selected_models):
+            with tab_container[i]:
+
+                # Generate Agent Brief
+                with st.spinner(f'Generating agent brief from {model}...🤖💤'):
+                    if 'claude' in model:
+                        response_text_agent_brief = generate_response_anthropic(full_prompt, model, temperature, top_p, max_tokens)
+                    elif 'gpt' in model:
+                        response_text_agent_brief = generate_response_openai(full_prompt, model, temperature, top_p, max_tokens)
+                    else:
+                        response_text_agent_brief=generate_response_gemini(full_prompt, model, temperature, top_p, max_tokens)
+                    
+                    response_text += f"# Agent Brief\n{response_text_agent_brief}\n\n"
+                    response_container.text_area("Generated Content log", value=response_text, height=800)
+                    scroll_text_area("dynamic_text_area")
+
+            
+                # Generate Persona
+                with st.spinner(f'Generating persona from {model}...🤖💤'):
+                    full_prompt=f"{response_text_agent_brief}\n{prompt_persona}"
+                    if 'claude' in model:
+                        response_text_persona = generate_response_anthropic(full_prompt, model, temperature, top_p, max_tokens)
+                    elif 'gpt' in model:
+                        response_text_persona = generate_response_openai(full_prompt, model, temperature, top_p, max_tokens)
+                    else:
+                        response_text_persona=generate_response_gemini(full_prompt, model, temperature, top_p, max_tokens)
+
+                    response_text += f"# Persona\n{response_text_persona}\n\n"
+                    response_container.text_area("Generated Content log", value=response_text, height=800)
+
+                # Generate Step flow
+                with st.spinner(f'Generating step flow from {model}...🤖💤'):
+                    full_prompt=f"{response_text_persona}\n{prompt_step_flow}"
+                    if 'claude' in model:
+                        response_text_step_flow = generate_response_anthropic(full_prompt, model, temperature, top_p, max_tokens)
+                    elif 'gpt' in model:
+                        response_text_step_flow = generate_response_openai(full_prompt, model, temperature, top_p, max_tokens)
+                    else:
+                        response_text_step_flow=generate_response_gemini(full_prompt, model, temperature, top_p, max_tokens)
+
+                    response_text += f"# Step Flow\n{response_text_step_flow}\n\n"
+                    response_container.text_area("Generated Content log", value=response_text, height=800)
+
+                # Generate Final remark
+                with st.spinner(f'Generating final remark from {model}...🤖💤'):
+                    full_prompt=f"{response_text_agent_brief}\n{prompt_final_remark}"
+                    if 'claude' in model:
+                        response_text_final_remark = generate_response_anthropic(full_prompt, model, temperature, top_p, max_tokens)
+                    elif 'gpt' in model:
+                        response_text_final_remark = generate_response_openai(full_prompt, model, temperature, top_p, max_tokens)
+                    else:
+                        response_text_final_remark=generate_response_gemini(full_prompt, model, temperature, top_p, max_tokens)
+
+                    response_text += f"# Final Remark\n{response_text_final_remark}\n\n"
+                    response_container.text_area("Generated Content log", value=response_text, height=800)
+
+    else:
+        st.error("Please select at least one model.")
+        
+    # Final instruction
+    st.markdown(f"\n\n")
+    st.markdown(f"**Agent Instruction (Final)**")
+    full_instruction=f"# PERSONA\n{response_text_persona}\n\n# STEP FLOW\n{response_text_step_flow}\n\n{response_text_final_remark}"
+    st.text_area("Please copy this instruction and paste into system prompt in any LLMs", value=full_instruction, height=800, disabled=False)
+    
+    # Translate response if needed and if NOT 'NONE'
+    if translation_options != "NONE":
+        translated_response = translate_text(full_instruction, translation_options)
+        st.text_area("Translated Instrcution:", value=translated_response, height=800, disabled=False)
+

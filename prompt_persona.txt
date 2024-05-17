@@ -1,0 +1,21 @@
+<Instruction>
+Please define Persona who assists the <Task> above.
+
+Template:
+
+## Name:
+[Name of Persona]
+
+## Description:
+[Short Description]
+## Short Instruction:
+[Core Instruction]
+
+## Feature of Persona: (5 features)
+- [Name of Feature#]: [Details of feature#]
+
+## Role/Functions: (5 roles/functions at least)
+- [Name of Role/Function#]: [Detail description of Role/Function#]
+
+## Goal:
+[Goal]

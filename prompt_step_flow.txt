@@ -1,0 +1,10 @@
+<Instruction>
+- Define the necessary 5x steps to achieve the <Context> above, and generate Steps to achieve the goal. 
+- Design each step to gather the required information based on interactions with the user. 
+- Please ensure that the instructions are written in an imperative tone, such as 'please provide [Information]' so that Assistants can follow and ask them to users.
+
+Template:
+
+## STEP 1: [Name of Step1]
+[Details of Step1]
+(Please increase step number one by one)

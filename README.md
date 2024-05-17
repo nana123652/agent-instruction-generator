@@ -1,57 +1,64 @@
-# Multi-LLM Tester
+# Agent Instruction Generator
 
 ## Overview
-The Multi-LLM Tester is a Streamlit application designed to facilitate easy comparison of responses from different large language models (LLMs) including OpenAI and Anthropic models. This tool is especially useful for developers and researchers interested in evaluating the capabilities and outputs of various LLMs under identical input conditions.
 
-Online app is available here:
-https://multi-llm-tester.streamlit.app/
+The Agent Instruction Generator is a Streamlit application designed to aid in generating detailed instructions for agents based on user-provided tasks. This tool utilizes various large language models (LLMs) including those from OpenAI, Anthropic, and Google Gemini.
 
 ## Features
-- **Multiple LLM Integration**: Supports various models from OpenAI and Anthropic, allowing users to test and compare responses side-by-side.
-- **Dynamic Input Configuration**: Users can customize the prompt, temperature, and max tokens to tailor the testing environment according to their needs.
-- **API Key Management**: Secure sidebar inputs for API keys with links to relevant documentation and pricing information.
-- **Cost Estimation**: Provides a detailed breakdown of estimated costs per model based on the input configuration.
-- **Privacy Policy Overview**: Includes an expander with privacy information related to the use of APIs.
-- **Stylish UI**: Custom CSS for titles, authors, and update dates enhances the user interface experience.
+
+- **Multiple LLM Integration**: Supports models like GPT-3.5, GPT-4, Claude-3 variations, and Gemini-1.5.
+- **Custom Instruction Generation**: Generates specific instructions for agents, including persona and step-by-step workflows.
+- **Translation Features**: Offers translation capabilities to Japanese and English for generated instructions.
+
+## How to Use
+
+1. **Input Task**: Enter the task you need assistance with in the designated text area.
+2. **Set Parameters**: Adjust the `Temperature`, `Top_p`, and `Max tokens` settings according to your preferences.
+3. **Model Selection**: Choose one or more language models to generate responses.
+4. **Translation Option**: If you need the final instruction in another language, select either Japanese or English from the dropdown menu.
+5. **Submit**: Click the 'Submit' button to process the input through the selected models.
+6. **View Responses**: The generated content will appear in the "Generated Content Log" area as it is created.
+7. **Final Instructions**: The complete and final instruction set will be displayed in a separate text area, ready to be copied and used as needed.
 
 ## Getting Started
 
 ### Prerequisites
-Before you can run the application, you'll need:
-- Python 3.6 or later.
-- Streamlit
-- The required Python libraries listed in `requirements.txt`.
+
+- Python 3.8+
+- pip packages: streamlit, openai, anthropic, google-generativeai, pandas, numpy, deepl, tiktoken
 
 ### Installation
+
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/multi-llm-tester.git
    ```
-2. Navigate to the cloned directory:
-   ```bash
-   cd multi-llm-tester
+   git clone https://github.com/aisprint/agent-instruction-generator.git
    ```
-3. Install the necessary Python packages:
-   ```bash
+2. Navigate to the project directory:
+   ```
+   cd agent-instruction-generator
+   ```
+3. Install required packages:
+   ```
    pip install -r requirements.txt
    ```
 
 ### Usage
-To run the application, execute:
-```bash
+
+Launch the application by running:
+```
 streamlit run app.py
 ```
-Navigate to `http://localhost:8501` in your web browser to see the app in action.
+Follow the on-screen instructions to generate agent instructions.
 
 ## Documentation
-- **Privacy Policy**: Each LLM provider has specific guidelines and policies regarding data privacy and usage, accessible directly through links provided in the app.
-- **API Keys**: Instructions for obtaining and managing API keys are provided in the sidebar.
-- **Model Selection**: Users can select multiple models to test simultaneously, with the response from each displayed in a separate tab.
+
+Additional documentation is available in the `docs` folder which includes detailed descriptions of the application architecture and API documentation.
 
 ## Contributing
-Contributions to improve Multi-LLM Tester are welcome. Please feel free to fork the repository and submit pull requests.
+
+Contributions to improve Agent Instructon Generator are welcome. Please feel free to fork the repository and submit pull requests.
 
 ## Author
-- Mamoru
 
-Enjoy testing and comparing the capabilities of different large language models with ease!
+- **Mamoru** - Initial work and ongoing maintenance.
+
