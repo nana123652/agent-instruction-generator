@@ -155,14 +155,7 @@ def add_to_history(user_input, response, file_name):
     formatted_date = now.strftime("%m/%d/%Y %H:%M:%S")
     title = f"{formatted_date}"
     st.session_state.history.append({"title": title, "user_input": user_input, "response": response})
-
-#### Delete here when deploying
-openai_api_key='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'
-anthropic_api_key='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'
-google_api_key='AIzaSyB1oSm6aMWtEsHCrYFVSEIAfq55GRD_rQc'
-deepL_api_key='d6670385-4818-4a68-bdf9-202c9e4c596f:fx'
-################################
-
+    
 client_openai = OpenAI(api_key=openai_api_key)
 client_anthropic = Anthropic(api_key=anthropic_api_key)
 genai.configure(api_key=google_api_key)
